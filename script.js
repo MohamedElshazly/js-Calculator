@@ -35,8 +35,8 @@ const operate = (operator, a, b) => {
             return "Unknown Operator!";
     };
 }
-let op = prompt("Enter op: ");
-let a = parseInt(prompt("a: "));
-let b = parseInt(prompt("b : "));
-const val = operate(op, a, b);
-console.log(val);
+// let op = prompt("Enter op: ");
+// let a = parseInt(prompt("a: "));
+// let b = parseInt(prompt("b : "));
+// const val = operate(op, a, b);
+// console.log(val);
