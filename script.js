@@ -35,8 +35,19 @@ const operate = (operator, a, b) => {
             return "Unknown Operator!";
     };
 }
-// let op = prompt("Enter op: ");
-// let a = parseInt(prompt("a: "));
-// let b = parseInt(prompt("b : "));
-// const val = operate(op, a, b);
-// console.log(val);
+//state
+let currentNumber; 
+const setCurrentNumber = (num) => {
+    currentNumber = num;
+};
+
+//click events
+const nums = document.querySelectorAll('.num');
+const displayScreen = document.querySelector('.screen');
+nums.forEach(num => {
+    num.addEventListener('click', (e) => {
+        setCurrentNumber(parseInt(e.target.innerText));
+        displayScreen.innerText = e.target.innerText;
+        // console.log(currentNumber, typeof currentNumber);
+    })
+})

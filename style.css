@@ -57,7 +57,7 @@ html {
     border: 3px solid rgb(54, 1, 54);
 }
 
-.num{
+.num, .num-special{
     width: 58px;
     height: 45px;
     /* border: 3px solid rgb(31, 35, 63); */
@@ -68,6 +68,9 @@ html {
     vertical-align: middle;
     line-height: 45px;
     margin:3px;
+}
+.num:hover, .op:hover {
+    cursor: pointer;
 }
 
 .op{
