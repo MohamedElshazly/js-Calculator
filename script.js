@@ -21,7 +21,11 @@ const div = (a, b) => {
 }; 
 
 //Operate: a function that takes one operator of the main four and two numbers
-const operate = (operator, a, b) => {
+const operate = (stack) => {
+    let a = stack[0];
+    let b = stack[2];
+    let operator = stack[1];
+
     switch(operator) {
         case '+':
             return add(a, b);
@@ -36,18 +40,63 @@ const operate = (operator, a, b) => {
     };
 }
 //state
-let currentNumber; 
-const setCurrentNumber = (num) => {
-    currentNumber = num;
+let currentNumber = '';
+let firstNumber;
+let secondNumber; 
+const setFirstNumber = (num) => {
+    firstNumber = num;
+};
+const setSecondNumber = (num) => {
+    secondNumber = num;
 };
 
+let computationStack = [];
+
+
 //click events
-const nums = document.querySelectorAll('.num');
+const keys = document.querySelectorAll('.key')
 const displayScreen = document.querySelector('.screen');
-nums.forEach(num => {
-    num.addEventListener('click', (e) => {
-        setCurrentNumber(parseInt(e.target.innerText));
-        displayScreen.innerText = e.target.innerText;
-        // console.log(currentNumber, typeof currentNumber);
+displayScreen.innerText = 0;
+keys.forEach(key => {
+    key.addEventListener('click', (e) => {
+        
+        if(e.target.classList[0] === 'op') {
+            let operation = e.target.innerText;
+            console.log(operation)
+            switch(operation) {
+                case '=':
+                    setSecondNumber(parseInt(currentNumber));
+                    computationStack.push(parseInt(currentNumber));
+                    currentNumber = '';
+                    let result = operate(computationStack);
+                    displayScreen.innerText = result;
+                    break;
+                case 'Ac':
+                    computationStack = [];
+                    currentNumber = '';
+                    displayScreen.innerText = 0;
+                    break;
+                case '+/-':
+                    if(currentNumber[0] != '-') {
+                        currentNumber = '-' + currentNumber;
+                    }else {
+                        currentNumber = currentNumber.slice(1);
+                    }
+        
+                    displayScreen.innerText = currentNumber;
+                    break;
+                default:
+                    setFirstNumber(parseInt(currentNumber));
+                    computationStack.push(parseInt(currentNumber));
+                    computationStack.push(e.target.innerText);
+                    currentNumber = '';
+            }
+        }
+        else {
+            currentNumber += e.target.innerText;
+            displayScreen.innerText = currentNumber;
+        }
+
+        
     })
 })
