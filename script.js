@@ -7,7 +7,7 @@ const add = (a, b) => {
 
 // 2.subtraction 
 const sub = (a, b) => {
-    return a -b;
+    return a - b;
 }; 
 
 // 3.Multiplication 
@@ -25,29 +25,42 @@ const operate = (stack) => {
     let a = stack[0];
     let b = stack[2];
     let operator = stack[1];
+    let result;
 
     switch(operator) {
         case '+':
-            return add(a, b);
+            result = add(a, b);
+            return decimalCount(String(result)) > 2 ? result = result.toFixed(2) : result = result;
         case '-':
-            return sub(a, b);
+            result = sub(a, b);
+            return decimalCount(String(result)) > 2 ? result = result.toFixed(2) : result = result;
         case '*':
-            return mult(a, b);
+            result = mult(a, b);
+            return decimalCount(String(result)) > 2 ? result = result.toFixed(2) : result = result;
         case '/':
-            return div(a, b);
+            result = div(a, b);
+            return decimalCount(String(result)) > 2 ? result = result.toFixed(2) : result = result;
         default:
             return "Unknown Operator!";
     };
 }
-//state
+
+// helper function
+const decimalCount = (numStr) => {
+    if (numStr.includes('.')) {
+        return numStr.split('.')[1].length;
+     };
+}
+
+//state management
 let currentNumber = '';
 let firstNumber;
 let secondNumber; 
 const setFirstNumber = (num) => {
-    firstNumber = num;
+    firstNumber = parseFloat(num);
 };
 const setSecondNumber = (num) => {
-    secondNumber = num;
+    secondNumber = parseFloat(num);
 };
 
 let computationStack = [];
@@ -60,22 +73,38 @@ displayScreen.innerText = 0;
 keys.forEach(key => {
     key.addEventListener('click', (e) => {
         
-        if(e.target.classList[0] === 'op') {
+        if(e.target.classList[0] === 'op') { //handles operations clicks!
             let operation = e.target.innerText;
             console.log(operation)
             switch(operation) {
-                case '=':
-                    setSecondNumber(parseInt(currentNumber));
-                    computationStack.push(parseInt(currentNumber));
-                    currentNumber = '';
-                    let result = operate(computationStack);
-                    displayScreen.innerText = result;
+                // idea here is that current number is 2nd one and we push it to computation-
+                // stack, get the result and set it to current number in case user wants to
+                //make another computation. 
+                case '=': 
+                    setSecondNumber(parseFloat(currentNumber).toFixed(2)); //rounds numbers to two decimal places
+                    if (computationStack[1] === '/' && secondNumber == 0) {
+                        displayScreen.innerText = "Why are you like this?";
+                        computationStack = [];
+                        currentNumber = '';
+                    }
+                    else {
+                        computationStack.push(secondNumber);
+                        let result = operate(computationStack);
+                        console.log(result);
+                        displayScreen.innerText = result;
+                        currentNumber = result;
+                        // computationStack = [];
+                    }
                     break;
+                
+                //AC simply clears our state
                 case 'Ac':
                     computationStack = [];
                     currentNumber = '';
                     displayScreen.innerText = 0;
                     break;
+                
+                //another simple case of toggling '-' sign before numbers
                 case '+/-':
                     if(currentNumber[0] != '-') {
                         currentNumber = '-' + currentNumber;
@@ -85,18 +114,35 @@ keys.forEach(key => {
         
                     displayScreen.innerText = currentNumber;
                     break;
+                
+                //this is the default behavior when user wants to perform any operation.
+                //we simply set the first number to be the current number, then push it and the 
+                //operation to the stack
                 default:
-                    setFirstNumber(parseInt(currentNumber));
-                    computationStack.push(parseInt(currentNumber));
-                    computationStack.push(e.target.innerText);
+                    setFirstNumber(parseFloat(currentNumber).toFixed(2));
+                    if(computationStack.length > 1) {
+                        computationStack = [];
+                        computationStack.push(firstNumber);
+                        computationStack.push(e.target.innerText);
+                    }
+                    else {
+                        computationStack.push(firstNumber);
+                        computationStack.push(e.target.innerText);
+                    }
                     currentNumber = '';
             }
         }
+        //This is the alternative behavior when user just types numbers
         else {
-            currentNumber += e.target.innerText;
-            displayScreen.innerText = currentNumber;
+                
+                currentNumber += e.target.innerText;
+                displayScreen.innerText = currentNumber;
         }
 
         
     })
 })
+
+//BUGS TO FIX
+//1. if user presses same operator twice, or replaces his operator, replace with already existing
+// fixed when user presses equal twice, and how to handle unknown operator 
