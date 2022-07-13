@@ -14,9 +14,9 @@ html {
     width: 300px;
     height: 100px;
     display: flex;
-    background-color: rgb(37, 35, 35);
+    background-color: #293241;
     margin: 1px;
-    border-bottom: 5px solid black;
+    border-bottom: 5px solid #ee6c4d;
     color:#fff;
     font-size: 32px;
     text-align: end;
@@ -28,11 +28,11 @@ html {
 .calc{
     width: 300px; 
     height: 350px;
-    border: 10px double orangered;
+    border: 10px solid #293241;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    background-color: #000;
+    background-color: #293241;
 }
 .input{
     display: flex;
@@ -44,7 +44,7 @@ html {
     align-self: flex-end;
     width: 200px;
     height: 250px;
-    border: 3px solid rgb(54, 1, 54);
+    border: 3px solid #293241;
 }
 
 .operations{
@@ -54,12 +54,12 @@ html {
     /* align-self: ; */
     width: 100px;
     height: 250px;
-    border: 3px solid rgb(54, 1, 54);
+    border: 3px solid #293241;
 }
 .op{
     width: 90px;
     height: 45px;
-    background-color: rgb(39, 168, 125);
+    background-color: #ee6c4d;
     border-radius: 10px;
     color: black;
     text-align: center;
@@ -72,7 +72,7 @@ html {
     width: 58px;
     height: 45px;
     /* border: 3px solid rgb(31, 35, 63); */
-    background-color: rgb(39, 168, 125);
+    background-color: #3d5a80;
     border-radius: 10px;
     color: black;
     text-align: center;
@@ -91,4 +91,8 @@ html {
 }
 .period{
     width: 80px;
+}
+.special{
+    background-color: #e0fbfc;
+
 }
