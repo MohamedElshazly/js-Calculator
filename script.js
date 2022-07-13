@@ -26,6 +26,7 @@ const operate = (stack) => {
     let b = stack[2];
     let operator = stack[1];
     let result;
+    console.log(a,b ,operator);
 
     switch(operator) {
         case '+':
@@ -54,16 +55,18 @@ const decimalCount = (numStr) => {
 
 //state management
 let currentNumber = '';
-let firstNumber;
+let numberToBePushedToStack = 0;
 let secondNumber; 
-const setFirstNumber = (num) => {
-    firstNumber = parseFloat(num);
+const setNumberToBePushedToStack = (num) => {
+    numberToBePushedToStack = parseFloat(num);
+    currentNumber = '';
 };
 const setSecondNumber = (num) => {
     secondNumber = parseFloat(num);
 };
 
 let computationStack = [];
+let result = 0;
 
 
 //click events
@@ -80,20 +83,23 @@ keys.forEach(key => {
                 // idea here is that current number is 2nd one and we push it to computation-
                 // stack, get the result and set it to current number in case user wants to
                 //make another computation. 
-                case '=': 
-                    setSecondNumber(parseFloat(currentNumber).toFixed(2)); //rounds numbers to two decimal places
-                    if (computationStack[1] === '/' && secondNumber == 0) {
+                case '=':
+                    if(computationStack.length < 2){
+                        break;
+                    } 
+                    setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2)); //rounds numbers to two decimal places
+                    if (computationStack[1] === '/' && numberToBePushedToStack == 0) {
                         displayScreen.innerText = "Why are you like this?";
                         computationStack = [];
-                        currentNumber = '';
                     }
                     else {
-                        computationStack.push(secondNumber);
-                        let result = operate(computationStack);
+                        computationStack.push(numberToBePushedToStack);
+                        result = operate(computationStack);
                         console.log(result);
                         displayScreen.innerText = result;
                         currentNumber = result;
-                        // computationStack = [];
+                        console.log(typeof currentNumber)
+                        computationStack = [];
                     }
                     break;
                 
@@ -101,6 +107,7 @@ keys.forEach(key => {
                 case 'Ac':
                     computationStack = [];
                     currentNumber = '';
+                    result = 0;
                     displayScreen.innerText = 0;
                     break;
                 
@@ -115,28 +122,72 @@ keys.forEach(key => {
                     displayScreen.innerText = currentNumber;
                     break;
                 
+                case 'del':
+                    if(currentNumber && !result){
+                        currentNumber = String(currentNumber).slice(0, -1);
+                        displayScreen.innerText = currentNumber;
+                        if(currentNumber === ''){
+                            displayScreen.innerText = 0;
+                        }
+                        console.log(currentNumber)
+                    }  
+                    break;
+
                 //this is the default behavior when user wants to perform any operation.
                 //we simply set the first number to be the current number, then push it and the 
                 //operation to the stack
                 default:
-                    setFirstNumber(parseFloat(currentNumber).toFixed(2));
-                    if(computationStack.length > 1) {
-                        computationStack = [];
-                        computationStack.push(firstNumber);
-                        computationStack.push(e.target.innerText);
+                    if(typeof computationStack[computationStack.length - 1] == "string" && currentNumber == '') {
+                        computationStack[computationStack.length - 1] = e.target.innerText;
                     }
                     else {
-                        computationStack.push(firstNumber);
-                        computationStack.push(e.target.innerText);
+                        setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2));                    
+                        if(result) { //if user preses '=' then naturally result is populated
+                                      //we check that and proceed
+                            console.log("here-1");
+                            computationStack.push(numberToBePushedToStack);
+                            computationStack.push(e.target.innerText);
+                            result = 0;
+                        }
+                        else if(computationStack.length % 2 == 0 && computationStack.length != 0) {
+                            console.log("here-2");
+                            computationStack.push(numberToBePushedToStack);
+                            let intermediateResult = operate(computationStack);
+                            displayScreen.innerText = intermediateResult;
+                            computationStack = [];
+                            computationStack.push(intermediateResult);
+                            computationStack.push(e.target.innerText);
+                            console.log(computationStack, 2)
+                        }
+                        else {
+                            console.log("here-3");
+                            computationStack.push(numberToBePushedToStack);
+                            computationStack.push(e.target.innerText);
+                            console.log(computationStack, 3)
+                        }
                     }
-                    currentNumber = '';
+                    
+                    
             }
         }
         //This is the alternative behavior when user just types numbers
         else {
-                
-                currentNumber += e.target.innerText;
-                displayScreen.innerText = currentNumber;
+                if(result){ //if user does a new operation after '='
+                    currentNumber = '';
+                    currentNumber += e.target.innerText;
+                    displayScreen.innerText = currentNumber;
+                }
+                else if(e.target.innerText == '.'){
+                    if(currentNumber.includes('.')){}
+                    else{
+                        currentNumber += e.target.innerText;
+                        displayScreen.innerText = currentNumber;
+                    }
+                }
+                else {
+                    currentNumber += e.target.innerText;
+                    displayScreen.innerText = currentNumber;
+                }     
         }
 
         
