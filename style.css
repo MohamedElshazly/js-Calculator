@@ -18,7 +18,7 @@ html {
     margin: 1px;
     border-bottom: 5px solid #ee6c4d;
     color:#fff;
-    font-size: 32px;
+    font-size: 33px;
     text-align: end;
     justify-content: flex-end;
     /* align-content: center; */
@@ -28,11 +28,12 @@ html {
 .calc{
     width: 300px; 
     height: 350px;
-    border: 10px solid #293241;
+    border: 10px solid #3d5a80;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    background-color: #293241;
+    background-color: #3d5a80;
+    overflow: hidden;
 }
 .input{
     display: flex;
@@ -44,7 +45,7 @@ html {
     align-self: flex-end;
     width: 200px;
     height: 250px;
-    border: 3px solid #293241;
+    border: 3px solid #3d5a80;
 }
 
 .operations{
@@ -54,7 +55,7 @@ html {
     /* align-self: ; */
     width: 100px;
     height: 250px;
-    border: 3px solid #293241;
+    border: 3px solid #3d5a80;
 }
 .op{
     width: 90px;
@@ -72,7 +73,7 @@ html {
     width: 58px;
     height: 45px;
     /* border: 3px solid rgb(31, 35, 63); */
-    background-color: #3d5a80;
+    background-color: #98c1d9;
     border-radius: 10px;
     color: black;
     text-align: center;
@@ -82,6 +83,8 @@ html {
 }
 .num:hover, .op:hover {
     cursor: pointer;
+    opacity: 0.7;
+    filter:alpha(opacity=40);
 }
 
 
@@ -91,8 +94,17 @@ html {
 }
 .period{
     width: 80px;
+    /* background-color: #ee6c4d; */
+
 }
 .special{
     background-color: #e0fbfc;
+}
 
+.opacity-on{
+    opacity: 1;
+}
+
+.opacity-off{
+    opacity: 0.7;
 }

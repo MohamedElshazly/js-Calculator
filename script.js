@@ -53,6 +53,25 @@ const decimalCount = (numStr) => {
      };
 }
 
+const turnOpacityOn = (operatorName) => {
+    for (const op of document.querySelectorAll(".op")) {
+        if (op.textContent.includes(operatorName)) {
+            if('opacity-off' in op.classList) {
+                op.classList.remove('opacity-off');
+            }
+          op.classList.add('opacity-on');
+        }
+      }
+}
+
+const turnOpacityOff = (operatorName) => {
+    for (const op of document.querySelectorAll(".op")) {
+        if (op.textContent.includes(operatorName)) {
+            op.classList.remove('opacity-on');  
+            op.classList.add('opacity-off');
+        }
+      }
+}
 //state management
 let currentNumber = '';
 let numberToBePushedToStack = 0;
@@ -72,18 +91,21 @@ let result = 0;
 //click events
 const keys = document.querySelectorAll('.key')
 const displayScreen = document.querySelector('.screen');
-displayScreen.innerText = 0;
+displayScreen.innerText = 0 + '\u00a0';
+
 keys.forEach(key => {
     key.addEventListener('click', (e) => {
         
         if(e.target.classList[0] === 'op') { //handles operations clicks!
             let operation = e.target.innerText;
-            console.log(operation)
+            console.log(operation);
+
             switch(operation) {
                 // idea here is that current number is 2nd one and we push it to computation-
                 // stack, get the result and set it to current number in case user wants to
                 //make another computation. 
                 case '=':
+                    // turnOpacityOn(computationStack[computationStack.length - 1]);
                     if(computationStack.length < 2){
                         break;
                     } 
@@ -93,10 +115,11 @@ keys.forEach(key => {
                         computationStack = [];
                     }
                     else {
+                        // turnOpacityOn(computationStack[computationStack.length - 1]);
                         computationStack.push(numberToBePushedToStack);
                         result = operate(computationStack);
                         console.log(result);
-                        displayScreen.innerText = result;
+                        displayScreen.innerText = result + '\u00a0';
                         currentNumber = result;
                         console.log(typeof currentNumber)
                         computationStack = [];
@@ -105,10 +128,11 @@ keys.forEach(key => {
                 
                 //AC simply clears our state
                 case 'Ac':
+                    // turnOpacityOn(computationStack[computationStack.length - 1])
                     computationStack = [];
                     currentNumber = '';
                     result = 0;
-                    displayScreen.innerText = 0;
+                    displayScreen.innerText = 0 + '\u00a0';
                     break;
                 
                 //another simple case of toggling '-' sign before numbers
@@ -119,15 +143,15 @@ keys.forEach(key => {
                         currentNumber = currentNumber.slice(1);
                     }
         
-                    displayScreen.innerText = currentNumber;
+                    displayScreen.innerText = currentNumber + '\u00a0';
                     break;
                 
                 case 'del':
                     if(currentNumber && !result){
                         currentNumber = String(currentNumber).slice(0, -1);
-                        displayScreen.innerText = currentNumber;
+                        displayScreen.innerText = currentNumber + '\u00a0';
                         if(currentNumber === ''){
-                            displayScreen.innerText = 0;
+                            displayScreen.innerText = 0 + '\u00a0';
                         }
                         console.log(currentNumber)
                     }  
@@ -137,8 +161,16 @@ keys.forEach(key => {
                 //we simply set the first number to be the current number, then push it and the 
                 //operation to the stack
                 default:
+                    // turnOpacityOff(e.target.innerText);
+                    
                     if(typeof computationStack[computationStack.length - 1] == "string" && currentNumber == '') {
+                        //turn opacity for previous operation back
+                        // turnOpacityOn(computationStack[computationStack.length - 1]);
                         computationStack[computationStack.length - 1] = e.target.innerText;
+                        displayScreen.innerText = displayScreen.innerText.slice(0,1) +'\u00a0'+ e.target.innerText + '\u00a0';
+                    }
+                    else if(currentNumber == ''){ //can't press an operation without a number first
+                        break;
                     }
                     else {
                         setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2));                    
@@ -148,22 +180,22 @@ keys.forEach(key => {
                             computationStack.push(numberToBePushedToStack);
                             computationStack.push(e.target.innerText);
                             result = 0;
+                            displayScreen.innerText += e.target.innerText + '\u00a0';
                         }
                         else if(computationStack.length % 2 == 0 && computationStack.length != 0) {
                             console.log("here-2");
                             computationStack.push(numberToBePushedToStack);
                             let intermediateResult = operate(computationStack);
-                            displayScreen.innerText = intermediateResult;
+                            displayScreen.innerText = intermediateResult +'\u00a0'+ e.target.innerText + '\u00a0';
                             computationStack = [];
                             computationStack.push(intermediateResult);
                             computationStack.push(e.target.innerText);
-                            console.log(computationStack, 2)
                         }
                         else {
                             console.log("here-3");
                             computationStack.push(numberToBePushedToStack);
                             computationStack.push(e.target.innerText);
-                            console.log(computationStack, 3)
+                            displayScreen.innerText += e.target.innerText + '\u00a0';
                         }
                     }
                     
@@ -175,18 +207,18 @@ keys.forEach(key => {
                 if(result){ //if user does a new operation after '='
                     currentNumber = '';
                     currentNumber += e.target.innerText;
-                    displayScreen.innerText = currentNumber;
+                    displayScreen.innerText = currentNumber + '\u00a0';
                 }
                 else if(e.target.innerText == '.'){
                     if(currentNumber.includes('.')){}
                     else{
                         currentNumber += e.target.innerText;
-                        displayScreen.innerText = currentNumber;
+                        displayScreen.innerText = currentNumber + '\u00a0';
                     }
                 }
                 else {
                     currentNumber += e.target.innerText;
-                    displayScreen.innerText = currentNumber;
+                    displayScreen.innerText = currentNumber + '\u00a0';
                 }     
         }
 
