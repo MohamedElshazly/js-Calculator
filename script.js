@@ -105,9 +105,7 @@ keys.forEach(key => {
                 // stack, get the result and set it to current number in case user wants to
                 //make another computation. 
                 case '=':
-                    // turnOpacityOn(computationStack[computationStack.length - 1]);
-                    if(computationStack.length < 2 || currentNumber == ''){
-                        console.log(currentNumber)
+                    if(computationStack.length < 2 ){
                         break;
                     } 
                     setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2)); //rounds numbers to two decimal places
@@ -116,8 +114,13 @@ keys.forEach(key => {
                         computationStack = [];
                     }
                     else {
-                        // turnOpacityOn(computationStack[computationStack.length - 1]);
-                        computationStack.push(numberToBePushedToStack);
+                        if(currentNumber == ''){
+                            console.log(numberToBePushedToStack);
+                            computationStack.push(computationStack[0]);
+                        }
+                        else {
+                            computationStack.push(numberToBePushedToStack);
+                        }
                         result = operate(computationStack);
                         console.log(result);
                         displayScreen.innerText = result + '\u00a0';
