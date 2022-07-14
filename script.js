@@ -169,7 +169,8 @@ keys.forEach(key => {
                         //turn opacity for previous operation back
                         // turnOpacityOn(computationStack[computationStack.length - 1]);
                         computationStack[computationStack.length - 1] = e.target.innerText;
-                        displayScreen.innerText = displayScreen.innerText.slice(0,1) +'\u00a0'+ e.target.innerText + '\u00a0';
+                        let toDisplay = displayScreen.innerText.slice(0, -3);
+                        displayScreen.innerText = toDisplay +'\u00a0'+ e.target.innerText + '\u00a0';
                     }
                     else if(currentNumber == ''){ //can't press an operation without a number first
                         break;
