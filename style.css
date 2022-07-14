@@ -8,6 +8,7 @@ html {
     padding: 0;
     margin: 0;
     font-family: Pacifico;
+    background-color: #293241;
 }
 .content{
     display: flex;
