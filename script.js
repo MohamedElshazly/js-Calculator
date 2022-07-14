@@ -106,7 +106,8 @@ keys.forEach(key => {
                 //make another computation. 
                 case '=':
                     // turnOpacityOn(computationStack[computationStack.length - 1]);
-                    if(computationStack.length < 2){
+                    if(computationStack.length < 2 || currentNumber == ''){
+                        console.log(currentNumber)
                         break;
                     } 
                     setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2)); //rounds numbers to two decimal places
