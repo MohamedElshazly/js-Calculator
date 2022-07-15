@@ -211,6 +211,7 @@ keys.forEach(key => {
                     currentNumber = '';
                     currentNumber += e.target.innerText;
                     displayScreen.innerText = currentNumber + '\u00a0';
+                    result = 0;
                 }
                 else if(e.target.innerText == '.'){
                     if(currentNumber.includes('.')){}
