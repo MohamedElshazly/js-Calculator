@@ -53,39 +53,54 @@ const decimalCount = (numStr) => {
      };
 }
 
-const turnOpacityOn = (operatorName) => {
-    for (const op of document.querySelectorAll(".op")) {
-        if (op.textContent.includes(operatorName)) {
-            if('opacity-off' in op.classList) {
-                op.classList.remove('opacity-off');
-            }
-          op.classList.add('opacity-on');
+const digitInput = (e) => {
+    if(result){ //if user does a new operation after '='
+        currentNumber = '';
+        currentNumber += e.target.innerText;
+        displayScreen.innerText = currentNumber + '\u00a0';
+        result = 0;
+    }
+    else if(e.target.innerText == '.'){
+        if(currentNumber.includes('.')){}
+        else{
+            currentNumber += e.target.innerText;
+            displayScreen.innerText = currentNumber + '\u00a0';
         }
-      }
+    }
+    else {
+        currentNumber += e.target.innerText;
+        displayScreen.innerText = currentNumber + '\u00a0';
+    } 
 }
-
-const turnOpacityOff = (operatorName) => {
-    for (const op of document.querySelectorAll(".op")) {
-        if (op.textContent.includes(operatorName)) {
-            op.classList.remove('opacity-on');  
-            op.classList.add('opacity-off');
-        }
-      }
-}
-//state management
-let currentNumber = '';
-let numberToBePushedToStack = 0;
-let secondNumber; 
 const setNumberToBePushedToStack = (num) => {
     numberToBePushedToStack = parseFloat(num);
     currentNumber = '';
 };
-const setSecondNumber = (num) => {
-    secondNumber = parseFloat(num);
+
+const changeOperation = (e) => {
+    computationStack[computationStack.length - 1] = e.target.innerText;
+    let toDisplay = displayScreen.innerText.slice(0, -3);
+    displayScreen.innerText = toDisplay +'\u00a0'+ e.target.innerText + '\u00a0';
 };
 
+const intermediateOperation = (e) => {
+    computationStack.push(numberToBePushedToStack);
+    let intermediateResult = operate(computationStack);
+    displayScreen.innerText = intermediateResult +'\u00a0'+ e.target.innerText + '\u00a0';
+    computationStack = [];
+    computationStack.push(intermediateResult);
+    computationStack.push(e.target.innerText);
+}
+
+//state management
+let currentNumber = '';
+let numberToBePushedToStack = 0;
+let secondNumber; 
 let computationStack = [];
 let result = 0;
+
+
+
 
 
 //click events
@@ -105,7 +120,6 @@ keys.forEach(key => {
                 // stack, get the result and set it to current number in case user wants to
                 //make another computation. 
                 case '=':
-                    console.log(computationStack)
                     if(computationStack.length < 2 ){ // try to press = before any number
                         break;
                     }
@@ -113,17 +127,16 @@ keys.forEach(key => {
                         currentNumber = computationStack[0];
                     } 
                     setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2)); //rounds numbers to two decimal places
+                    // handles division by 0
                     if (computationStack[1] === '/' && numberToBePushedToStack == 0) {
-                        displayScreen.innerText = "Why are you like this?";
+                        displayScreen.innerText = "Why are you like this?" + '\u00a0';
                         computationStack = [];
                     }
                     else {
                         computationStack.push(numberToBePushedToStack);
                         result = operate(computationStack);
-                        console.log(result);
                         displayScreen.innerText = result + '\u00a0';
                         currentNumber = result;
-                        console.log(typeof currentNumber)
                         computationStack = [];
                     }
                     break;
@@ -162,15 +175,10 @@ keys.forEach(key => {
                 //this is the default behavior when user wants to perform any operation.
                 //we simply set the first number to be the current number, then push it and the 
                 //operation to the stack
-                default:
-                    // turnOpacityOff(e.target.innerText);
-                    
+                default:                    
                     if(typeof computationStack[computationStack.length - 1] == "string" && currentNumber == '') {
-                        //turn opacity for previous operation back
-                        // turnOpacityOn(computationStack[computationStack.length - 1]);
-                        computationStack[computationStack.length - 1] = e.target.innerText;
-                        let toDisplay = displayScreen.innerText.slice(0, -3);
-                        displayScreen.innerText = toDisplay +'\u00a0'+ e.target.innerText + '\u00a0';
+                        //code to change the operation mid equation
+                        changeOperation(e);
                     }
                     else if(currentNumber == ''){ //can't press an operation without a number first
                         break;
@@ -179,23 +187,17 @@ keys.forEach(key => {
                         setNumberToBePushedToStack(parseFloat(currentNumber).toFixed(2));                    
                         if(result) { //if user preses '=' then naturally result is populated
                                       //we check that and proceed
-                            console.log("here-1");
                             computationStack.push(numberToBePushedToStack);
                             computationStack.push(e.target.innerText);
                             result = 0;
                             displayScreen.innerText += e.target.innerText + '\u00a0';
                         }
                         else if(computationStack.length % 2 == 0 && computationStack.length != 0) {
-                            console.log("here-2");
-                            computationStack.push(numberToBePushedToStack);
-                            let intermediateResult = operate(computationStack);
-                            displayScreen.innerText = intermediateResult +'\u00a0'+ e.target.innerText + '\u00a0';
-                            computationStack = [];
-                            computationStack.push(intermediateResult);
-                            computationStack.push(e.target.innerText);
+                            //do intermediate operations instead of just pressing = 
+                            //ex: 12 * 5 + 6 + 7 * 2 
+                            intermediateOperation(e);
                         }
                         else {
-                            console.log("here-3");
                             computationStack.push(numberToBePushedToStack);
                             computationStack.push(e.target.innerText);
                             displayScreen.innerText += e.target.innerText + '\u00a0';
@@ -207,28 +209,13 @@ keys.forEach(key => {
         }
         //This is the alternative behavior when user just types numbers
         else {
-                if(result){ //if user does a new operation after '='
-                    currentNumber = '';
-                    currentNumber += e.target.innerText;
-                    displayScreen.innerText = currentNumber + '\u00a0';
-                    result = 0;
-                }
-                else if(e.target.innerText == '.'){
-                    if(currentNumber.includes('.')){}
-                    else{
-                        currentNumber += e.target.innerText;
-                        displayScreen.innerText = currentNumber + '\u00a0';
-                    }
-                }
-                else {
-                    currentNumber += e.target.innerText;
-                    displayScreen.innerText = currentNumber + '\u00a0';
-                }     
+               digitInput(e);     
         }
 
         
     })
 })
+
 
 //BUGS TO FIX
 //1. if user presses same operator twice, or replaces his operator, replace with already existing
